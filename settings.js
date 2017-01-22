@@ -1,7 +1,7 @@
 var settings = {
 canvas: undefined,
 context: undefined,
-nextObject: "Pen",
+nextObject: "Line",
 nextColor: "Black",
 isDrawing: false,
 currentShape: undefined,

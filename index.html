@@ -5,13 +5,10 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Draw</title>
-	<link rel="stylesheet" type="text/css" href="">
-	</style>
-	<script type="text/javascript" src="rectangle.js"></script>
-	<script type="text/javascript" src="css.css"></script>
-	<script type="text/javascript" src="pen.js"></script>	
-	<script type="text/javascript" src="line.js"></script>	
-	<script type="text/javascript" src="circle.js"></script>
+	<link rel="stylesheet" type="text/css" href="css.css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript"  src="draw.js"></script>
+	<script type="text/javascript"  src="settings.js"></script>
 </head>
 	<body style="margin: 0;">
 		<div class="top-bar">
@@ -25,8 +22,8 @@
 			<p>Drawing object:</p>
 			<select name="select" id="shapes" onchange="changeShape()">
 				<option value="Circle" />Circle</option>
-				<option value="Line" />Line</option>
-				<option value="Pen" selected="selected" />Pen</option>
+				<option value="Line" selected="selected"/>Line</option>
+				<option value="Pen"  />Pen</option>
 				<option value="Rectangle" />Rectangle</option>
 				<option value="Text" />Text</option>
 			</select>
@@ -50,6 +47,5 @@
 	</canvas>
 
 	</body>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script type="text/javascript"  src="draw.js"></script>
+
 </html>
