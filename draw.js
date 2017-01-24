@@ -56,6 +56,7 @@ class Rectangle extends Shape {
 class Circle extends Shape {
     constructor(x, y, color){
         super(x, y, color);
+       
     }
 
     doStuff(){
@@ -63,7 +64,20 @@ class Circle extends Shape {
     }
 
     draw(context){
-        
+        context.beginPath();
+        context.arc(this.x, this.y, this.endX - this.x, this.endY - this.y, 2*Math.PI);
+        context.stroke();
+        context.closePath();
+    
+        if((this.x - this.endY) < 0) {
+
+
+            this.x = Math.abs(this.x);
+        }
+
+        if(this.endY < 0) {
+            this.y = Math.abs(this.y);
+        }
     }
 }
 
@@ -102,7 +116,7 @@ class Pen extends Shape {
 var settings = {
 canvas: undefined,
 context: undefined,
-nextObject: "Pen",
+nextObject: "Circle",
 nextColor: "Black",
 isDrawing: false,
 currentShape: undefined,
