@@ -55,31 +55,17 @@ class Rectangle extends Shape {
 
 class Circle extends Shape {
     constructor(x, y, color, width){
-        super(x, y, color, width);
-       
-    }
-
-    doStuff(){
-        super.doStuff();
+        super(x, y, color, width);  
     }
 
     draw(context){
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.beginPath();
-        context.arc(this.x, this.y, this.endX - this.x, this.endY - this.y, 2*Math.PI);
+        var radius = Math.max(Math.abs(this.endX - this.x), Math.abs(this.endY - this.y));
+        context.arc(this.x,this.y,radius,0,2*Math.PI);
         context.stroke();
         context.closePath();
-    
-        if((this.x - this.endY) < 0) {
-
-
-            this.x = Math.abs(this.x);
-        }
-
-        if(this.endY < 0) {
-            this.y = Math.abs(this.y);
-        }
     }
 }
 
@@ -90,7 +76,6 @@ class Line extends Shape {
     }
 
     draw(context){
-
         context.strokeStyle = this.color;
         context.lineWidth = this.width;
         context.beginPath();
@@ -124,7 +109,7 @@ isDrawing: false,
 currentShape: undefined,
 dragStartLocation: undefined,
 nextWidth: 3,
-redo: undefined,
+redo: [],
 shapes: []
 }
 
@@ -220,25 +205,18 @@ $('#clear-btn').click(function() {
 })
 
 $('#undo-btn').click(function() {
-    settings.redo = settings.shapes.pop();
-    drawAll();
-})
-
-$('#redo-btn').click(function() {
-    if(settings.redo != undefined){
-        settings.shapes.push(settings.redo);
-        drawAll();
-        settings.redo = undefined;    
+    if (settings.shapes.length > 0) {
+      settings.redo.push(settings.shapes.pop());
+      drawAll();
     }
 })
-/*
+
 $('#redo-btn').click(function() {
     if (settings.redo.length > 0) {
       settings.shapes.push(settings.redo.pop());
       drawAll();
     }
 })
-*/
 
 $('#red-rdo').click(function() {
     settings.nextColor = "Red";
