@@ -70,7 +70,13 @@ class Circle extends Shape {
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.beginPath();
-        context.arc(this.x,this.y,radius,0,2*Math.PI);
+
+        var newX = (this.endX - this.x)/2;
+        var newY = (this.endY - this.y)/2;
+        var radius = Math.sqrt(Math.pow(newX,2) + Math.pow(newY,2));
+
+        console.log(newX); console.log(newY); console.log(radius);
+        context.arc(this.x + newX, this.y + newY ,radius,0,2*Math.PI);
         context.stroke();
         context.closePath();
     }
@@ -79,7 +85,6 @@ class Circle extends Shape {
 class Line extends Shape {
     constructor(x, y, color, width){
         super(x, y, color, width);
-        this.points = [];
     }
 
     draw(context){
@@ -97,16 +102,24 @@ class Line extends Shape {
 class Pen extends Shape {
     constructor(x, y, color, width){
         super(x, y, color,width);
+        this.points = [];
     }
 
     setEnd(x, y) {
-        //þetta eru bara nafnlaust object, líka hægt að búa til klasa um points
-        //og senda þá x og y sem færibreytur í smiðinn
         this.points.push({x: x, y: y});
     }
 
     draw(context){
-        console.log("using pen");
+        context.strokeStyle = this.color;
+        context.lineWidth = this.width;
+        context.beginPath();
+        context.moveTo(this.x, this.y);
+
+        for( var i = 0; i < this.points.length; i++ ){
+            context.lineTo(this.points[i].x, this.points[i].y);
+        }
+        context.stroke();
+
     }
 }
 
