@@ -75,7 +75,6 @@ class Circle extends Shape {
 class Line extends Shape {
     constructor(x, y, color, width){
         super(x, y, color, width);
-        this.points = [];
     }
 
     draw(context){
@@ -91,15 +90,23 @@ class Line extends Shape {
 class Pen extends Shape {
     constructor(x, y, color, width){
         super(x, y, color,width);
+        this.points = [];
     }
 
     setEnd(x, y) {
-        //þetta eru bara naflaus object, líka hægt að búa til klasa um points
-        //og senda þá x og y sem færibreytur í smiðinn
-        this.points.push({x: x, y: y});    }
+        this.points.push({x: x, y: y});   
+    }
 
     draw(context){
+        context.strokeStyle = this.color;
+        context.lineWidth = this.width;
+        context.beginPath();
+        context.moveTo(this.x, this.y);
+        for( var i = 0; i < this.points.length; i++ ){
+            context.lineTo(this.points[i].x, this.points[i].y);    
+        }
         
+        context.stroke();   
     }
 }
 
