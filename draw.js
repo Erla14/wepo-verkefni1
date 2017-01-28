@@ -62,8 +62,11 @@ class Circle extends Shape {
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.beginPath();
-        var radius = Math.max(Math.abs(this.endX - this.x), Math.abs(this.endY - this.y));
-        context.arc(this.x,this.y,radius,0,2*Math.PI);
+        var newX = (this.endX - this.x)/2;
+        var newY = (this.endY - this.y)/2;
+        var radius = Math.sqrt(Math.pow(newX,2) + Math.pow(newY,2));
+        console.log(newX); console.log(newY); console.log(radius);
+        context.arc(this.x + newX, this.y + newY ,radius,0,2*Math.PI);
         context.stroke();
         context.closePath();
     }
