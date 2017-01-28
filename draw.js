@@ -126,6 +126,7 @@ class Pen extends Shape {
 class Text extends Shape {
     constructor(x, y, color, width) {
         super(x, y, color, width);
+        this.textInput;
     }
 
     draw(context) {
@@ -166,13 +167,31 @@ class Text extends Shape {
     }
 
     var fontAndSize = pixels + " Arial";
-    var textContents = $("#textBox").val();
 
     context.fillStyle = this.color;
     context.font = fontAndSize;
-    context.fillText(textContents,this.x,this.y);
+    context.fillText(this.textInput.val(),this.x,this.y);
+    this.textInput.remove();
+  }
 
-    textBox.remove();
+  spawnBox() {
+      var currentBox = document.getElementById("textBox");
+      var boundingBox = settings.canvas.getBoundingClientRect();
+      var xcords = settings.dragStartLocation.x + boundingBox.left;
+      var ycords = settings.dragStartLocation.y + boundingBox.top;
+
+      if (currentBox !== null) {
+          currentBox.remove();
+      }
+
+      this.textInput = $("<input />");
+      $(this.textInput).attr("id", "textBox");
+      this.textInput.css("position", "absolute");
+      this.textInput.css("left", xcords + "px");
+      this.textInput.css("top", ycords + "px");
+      this.textInput.css("visibility", "visible");
+
+      $("#canvasDiv").append(this.textInput);
   }
 }
 
@@ -227,25 +246,8 @@ $(document).ready(function()
             shape = new Pen( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
         }
         else if (settings.nextObject === "Text") {
-            var currentBox = document.getElementById("textBox");
-            var boundingBox = settings.canvas.getBoundingClientRect();
-            var xcords = settings.dragStartLocation.x + boundingBox.left;
-            var ycords = settings.dragStartLocation.y + boundingBox.top;
-
-            if(currentBox !== null){
-              currentBox.remove()
-            }
-
-            this.textInput;
-            this.textInput = $("<input />");
-            $(this.textInput).attr("id", "textBox");
-            this.textInput.css("position", "absolute");
-            this.textInput.css("left", xcords + "px");
-            this.textInput.css("top", ycords + "px");
-            this.textInput.css("visibility", "visible");
-
-            $("#canvasDiv").append(this.textInput);
-
+          shape = new Text(settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
+          shape.spawnBox();
         }
         settings.currentShape = shape;
     });
@@ -298,8 +300,8 @@ function drawAll() {
 $(document).keypress(function(e) {
     if (e.keyCode === 13) {
         if (settings.nextObject === "Text") {
-            var shape = new Text(settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
-            shape.draw(settings.context);
+            settings.shapes.push(settings.currentShape);
+            drawAll();
         }
     }
 });
