@@ -12,10 +12,12 @@
 			<button id="clear-btn">Clear all</button>
 			<button id="undo-btn">Undo</button>
 			<button id="redo-btn">Redo</button>
+
 			<input type="radio" name="pickAcolor" id="red-rdo" /> Red
 			<input type="radio" name="pickAcolor" id="blue-rdo"/> Blue
 			<input type="radio" name="pickAcolor" id="green-rdo"/> Green
 			<input type="radio" name="pickAcolor" id="black-rdo"/> Black
+
 			<p>Drawing object:</p>
 			<select name="select" id="shapes" onchange="changeShape()">
 				<option value="Circle" selected="selected"/>Circle</option>
@@ -24,6 +26,7 @@
 				<option value="Rectangle" />Rectangle</option>
 				<option value="Text" />Text</option>
 			</select>
+
 			<select name="strokeWidth" id="str-width" onchange="changeWidth()">
 				<option value="10" />10</option>
 				<option value="9" />9</option>
@@ -37,15 +40,20 @@
 				<option value="1" />1</option>
 			</select>
 		</div>
-	<canvas id = "myCanvas" width="500" height="300" style="border: 1px solid gray">
-		<p>
-			Your browser doesn't support this funtionality
-		</p>
-	</canvas>
+		<div id="canvasDiv" position="relative">
+			<canvas id = "myCanvas" width="500" height="300" style="border: 1px solid gray">
+				<p>
+					Your browser doesn't support this functionality
+				</p>
+			</canvas>
+		</div>
+
+	<!-- <input type="text" id="textInput" onkeypress="displayResult()" -->
 
 	</body>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript"  src="draw.js"></script>
+
 </html>
 
 <!--setja textasvæði sem er hidden, svo þegar smellt er, birtist það   -->

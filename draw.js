@@ -14,9 +14,11 @@ $.ajax({
     data: JSON.stringify(drawing),
     success: function (data) {
         // The drawing was successfully saved
+        //prompt("The drawing was successfully saved.");
     },
     error: function (xhr, err) {
         // The drawing could NOT be saved
+        //prompt("The drawing could NOT be saved.");
     }
 });
 
@@ -25,7 +27,7 @@ $.ajax({
 console.log(drawing);
 
 //Shape sér um að geyma öll sameiginleg gögn um teiknihlutina.
-class Shape { 
+class Shape {
     constructor(x, y, color, width) {
         this.x = x;
         this.y = y;
@@ -47,6 +49,8 @@ class Rectangle extends Shape {
     }
 
     draw(context){
+        //console.log("drawing rectangle");
+
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.strokeRect(this.x, this.y, this.endX - this.x, this.endY - this.y);
@@ -55,14 +59,17 @@ class Rectangle extends Shape {
 
 class Circle extends Shape {
     constructor(x, y, color, width){
-        super(x, y, color, width);  
+        super(x, y, color, width);
     }
 
     draw(context){
+        console.log("drawing circle");
+
+        var radius = Math.max(Math.abs(this.endX - this.x), Math.abs(this.endY - this.y));
+
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.beginPath();
-        var radius = Math.max(Math.abs(this.endX - this.x), Math.abs(this.endY - this.y));
         context.arc(this.x,this.y,radius,0,2*Math.PI);
         context.stroke();
         context.closePath();
@@ -76,6 +83,8 @@ class Line extends Shape {
     }
 
     draw(context){
+        console.log("drawing line");
+
         context.strokeStyle = this.color;
         context.lineWidth = this.width;
         context.beginPath();
@@ -91,26 +100,80 @@ class Pen extends Shape {
     }
 
     setEnd(x, y) {
-        //þetta eru bara naflaus object, líka hægt að búa til klasa um points
+        //þetta eru bara nafnlaust object, líka hægt að búa til klasa um points
         //og senda þá x og y sem færibreytur í smiðinn
-        this.points.push({x: x, y: y});    }
+        this.points.push({x: x, y: y});
+    }
 
     draw(context){
-        
+        console.log("using pen");
     }
 }
 
+class Text extends Shape {
+    constructor(x, y, color, width) {
+        super(x, y, color, width);
+    }
+
+    draw(context) {
+        console.log("writing text");
+
+        var pixels = "";
+        switch(parseInt(this.width)) {
+        case 1:
+            pixels = "10px";
+            break;
+        case 2:
+            pixels = "15px";
+            break;
+        case 3:
+            pixels = "20px";
+            break;
+        case 4:
+            pixels = "25px";
+            break;
+        case 5:
+            pixels = "30px";
+            break;
+        case 6:
+            pixels = "35px";
+            break;
+        case 7:
+            pixels = "40px";
+            break;
+        case 8:
+            pixels = "45px";
+            break;
+        case 9:
+            pixels = "50px";
+            break;
+        case 10:
+            pixels = "55px";
+            break;
+    }
+
+    var fontAndSize = pixels + " Arial";
+    var textContents = $("#textBox").val();
+
+    context.fillStyle = this.color;
+    context.font = fontAndSize;
+    context.fillText(textContents,this.x,this.y);
+
+    textBox.remove();
+  }
+}
+
 var settings = {
-canvas: undefined,
-context: undefined,
-nextObject: "Circle",
-nextColor: "Black",
-isDrawing: false,
-currentShape: undefined,
-dragStartLocation: undefined,
-nextWidth: 3,
-redo: [],
-shapes: []
+    canvas: undefined,
+    context: undefined,
+    nextObject: "Pen",
+    nextColor: "Black",
+    isDrawing: false,
+    currentShape: undefined,
+    dragStartLocation: undefined,
+    nextWidth: 3,
+    redo: [],
+    shapes: []
 }
 
 $(document).ready(function()
@@ -128,75 +191,105 @@ $(document).ready(function()
         return {x: x, y: y};
     }
 
-    
-    $("#myCanvas").mousedown(function(e)
-    {
+
+    $("#myCanvas").mousedown(function(e) {
+        //console.log("Inside mousedown");
+
         var shape = undefined;
+        settings.redo = [];
         settings.isDrawing = true;
         settings.dragStartLocation = getCanvasPoints(e);
 
-        
+
         if (settings.nextObject === "Circle") {
             shape = new Circle( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
         }
         else if (settings.nextObject === "Rectangle") {
             shape = new Rectangle( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
         }
-
         else if (settings.nextObject === "Line") {
             shape = new Line( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
         }
-
         else if (settings.nextObject === "Pen") {
             shape = new Pen( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
         }
-
         else if (settings.nextObject === "Text") {
-            shape = new Text( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
-        }
+            var currentBox = document.getElementById("textBox");
+            var boundingBox = settings.canvas.getBoundingClientRect();
+            var xcords = settings.dragStartLocation.x + boundingBox.left;
+            var ycords = settings.dragStartLocation.y + boundingBox.top;
 
+            if(currentBox !== null){
+              currentBox.remove()
+            }
+
+            this.textInput;
+            this.textInput = $("<input />");
+            $(this.textInput).attr("id", "textBox");
+            this.textInput.css("position", "absolute");
+            this.textInput.css("left", xcords + "px");
+            this.textInput.css("top", ycords + "px");
+            this.textInput.css("visibility", "visible");
+
+            $("#canvasDiv").append(this.textInput);
+
+        }
         settings.currentShape = shape;
     });
 
     $("#myCanvas").mousemove(function(e) {
+        //console.log("Inside mousemove");
 
         if (settings.isDrawing === true) {
+            if (settings.nextObject === "Text") {
+                return;
+            }
             drawAll();
 
             var shape = settings.currentShape;
-
             var position = getCanvasPoints(e);
 
             shape.setEnd(position.x, position.y);
-
             shape.draw(settings.context);
-        }        
+        }
     });
 
-    $("#myCanvas").mouseup(function(e)
-    {
+    $("#myCanvas").mouseup(function(e) {
+        //console.log("Inside mouseup");
+
         if(settings.isDrawing === true) {
+            if (settings.nextObject === "Text") {
+                return;
+            }
             var shape = settings.currentShape;
+            var position = getCanvasPoints(e);
 
             settings.isDrawing = false;
-            var position = getCanvasPoints(e);
             shape.setEnd(position.x, position.y);
-
             settings.shapes.push(shape);
 
-            drawAll();    
+            drawAll();
         }
-        
+
     });
 });
 
 function drawAll() {
     settings.context.clearRect(0, 0, settings.canvas.width, settings.canvas.height);
-    for(var i = 0; i < settings.shapes.length; i++)
-    {
+
+    for(var i = 0; i < settings.shapes.length; i++) {
         settings.shapes[i].draw(settings.context);
     }
 }
+
+$(document).keypress(function(e) {
+    if (e.keyCode === 13) {
+        if (settings.nextObject === "Text") {
+            var shape = new Text(settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
+            shape.draw(settings.context);
+        }
+    }
+});
 
 $('#clear-btn').click(function() {
     settings.shapes = [];
@@ -235,7 +328,7 @@ $('#black-rdo').click(function() {
 })
 
 function changeShape(){
-    settings.nextObject = $('#shapes').val();    
+    settings.nextObject = $('#shapes').val();
 }
 
 function changeWidth(){
