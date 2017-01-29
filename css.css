@@ -2,23 +2,20 @@
   background: grey;
 }
 
-#colors {
-  background: pink;
-
-
-}
-
 #canvasTitle {
   font-size: 20px;
-  background: lightblue;
 }
-
+#colors {
+  padding-top: 8px;
+}
+#canvasTitle {
+  padding: none;
+}
 #shapeDropDown {
   width: 12%;
   height: 25px;
   display: block;
   clear: both;
-  background: red;
   float: left;
 }
 #widthDropDown {
@@ -28,9 +25,8 @@
   clear: both;
   width: 12%;
   height: 25px;
-  background: orange;
 }
-pickAcolor {
+.colors {
   width: 12%;
   height: 25px;
   display: hidden;
