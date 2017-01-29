@@ -1,4 +1,3 @@
-//Shape sér um að geyma öll sameiginleg gögn um teiknihlutina.
 class Shape {
     constructor(x, y, color, width) {
         this.x = x;
@@ -7,6 +6,14 @@ class Shape {
         this.endY = y;
         this.color = color;
         this.width = width;
+    }
+
+    moveTo(posChange)
+    {
+        this.x += posChange.x;
+        this.y += posChange.y;
+        this.endX += posChange.x;
+        this.endY += posChange.y;
     }
 
     setEnd(x, y) {
@@ -21,8 +28,6 @@ class Rectangle extends Shape {
     }
 
     draw(context){
-        //console.log("drawing rectangle");
-
         context.lineWidth = this.width;
         context.strokeStyle = this.color;
         context.strokeRect(this.x, this.y, this.endX - this.x, this.endY - this.y);
@@ -81,6 +86,17 @@ class Pen extends Shape {
         this.points.push({x: x, y: y});
     }
 
+    moveTo(posChange)
+    {
+        this.x += posChange.x;
+        this.y += posChange.y;
+
+        for( var i = 0; i < this.points.length; i++ ){
+            this.points[i].x += posChange.x;
+            this.points[i].y += posChange.y;
+        }
+    }
+
     draw(context){
         context.strokeStyle = this.color;
         context.lineWidth = this.width;
@@ -91,7 +107,6 @@ class Pen extends Shape {
             context.lineTo(this.points[i].x, this.points[i].y);
         }
         context.stroke();
-
     }
 }
 
@@ -170,9 +185,11 @@ class Text extends Shape {
 var settings = {
     canvas: undefined,
     context: undefined,
+    gcontext: undefined,
     nextObject: "Pen",
     nextColor: "Black",
     isDrawing: false,
+    isMoving: false,
     currentShape: undefined,
     dragStartLocation: undefined,
     nextWidth: 3,
@@ -185,8 +202,10 @@ $(document).ready(function()
     settings.canvas = document.getElementById("myCanvas");
     settings.context = settings.canvas.getContext("2d");
 
-//láta val frá notanda fara inn í þessar breytur
-//these are attributes in an object
+    var ghostcanvas = document.createElement('canvas');
+    ghostcanvas.height = settings.canvas.height;
+    ghostcanvas.width = settings.canvas.width;
+    settings.gcontext = ghostcanvas.getContext('2d');
 
     function getCanvasPoints(e){
         var x = e.pageX - settings.canvas.offsetLeft;
@@ -195,15 +214,38 @@ $(document).ready(function()
         return {x: x, y: y};
     }
 
+    function clear(ctx)
+    {
+        ctx.clearRect(0, 0, settings.canvas.width, settings.canvas.height);
+    }
 
     $("#myCanvas").mousedown(function(e) {
-        //console.log("Inside mousedown");
 
         var shape = undefined;
         settings.redo = [];
-        settings.isDrawing = true;
         settings.dragStartLocation = getCanvasPoints(e);
 
+        clear(settings.gcontext);
+
+        var l = settings.shapes.length;
+        for (var i = l-1; i >= 0; i--) {
+            // draw shape onto ghost context
+            settings.shapes[i].draw(settings.gcontext);
+
+            // get image data at the mouse x,y pixel
+            var imageData = settings.gcontext.getImageData(settings.dragStartLocation.x, settings.dragStartLocation.y, 1, 1);
+            var index = (settings.dragStartLocation.x + settings.dragStartLocation.y * imageData.width) * 4;
+
+            // if the mouse pixel exists, select and break
+            if (imageData.data[3] > 0) {
+                settings.isMoving = true;
+                settings.currentShape = settings.shapes[i];
+                clear(settings.gcontext);
+                return;
+            }
+        }
+
+        settings.isDrawing = true;
 
         if (settings.nextObject === "Circle") {
             shape = new Circle( settings.dragStartLocation.x, settings.dragStartLocation.y, settings.nextColor, settings.nextWidth);
@@ -225,7 +267,6 @@ $(document).ready(function()
     });
 
     $("#myCanvas").mousemove(function(e) {
-        //console.log("Inside mousemove");
 
         if (settings.isDrawing === true) {
             if (settings.nextObject === "Text") {
@@ -239,10 +280,19 @@ $(document).ready(function()
             shape.setEnd(position.x, position.y);
             shape.draw(settings.context);
         }
+        else if (settings.isMoving === true){
+
+            var shape = settings.currentShape;
+            var position = getCanvasPoints(e);
+            var posChange = {x: position.x - settings.dragStartLocation.x, y: position.y - settings.dragStartLocation.y};
+            shape.moveTo(posChange);
+            settings.dragStartLocation = position;
+            console.log(posChange);
+            drawAll();
+        }
     });
 
     $("#myCanvas").mouseup(function(e) {
-        //console.log("Inside mouseup");
 
         if(settings.isDrawing === true) {
             if (settings.nextObject === "Text") {
@@ -257,7 +307,10 @@ $(document).ready(function()
 
             drawAll();
         }
-
+        else if (settings.isMoving === true) {
+            
+            settings.isMoving = false;
+        }
     });
 });
 
@@ -305,17 +358,6 @@ $("#save-btn").click(function(){
   var day = currentDate.getDate();
   var month = currentDate.getMonth() + 1;
   var year = currentDate.getFullYear();
-/*
-  if(day < 10) {
-      day = '0' + day
-  }
-
-  if(month < 10) {
-      month = '0' + month
-  }
-
-  currentDate = day + '/' + month + '/' + year;
-*/
   var drawingTitle = currentDate;
   var drawing = {
     title: "Picture from " + drawingTitle,
@@ -347,8 +389,8 @@ $("#load-btn").click(function(){
     //dataGet: JSON.parse(data),    (virkar ekki...!)
     success: function (dataGet) {
         console.log(dataGet);
-        //settings.shapes = dataGet.content;
-        //drawAll();
+        settings.shapes = dataGet.content;
+        drawAll();
     },
     error: function (xhr, err) {
         console.log(xhr);
