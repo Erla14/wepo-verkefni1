@@ -305,7 +305,7 @@ $("#save-btn").click(function(){
   var day = currentDate.getDate();
   var month = currentDate.getMonth() + 1;
   var year = currentDate.getFullYear();
-
+/*
   if(day < 10) {
       day = '0' + day
   }
@@ -314,15 +314,14 @@ $("#save-btn").click(function(){
       month = '0' + month
   }
 
-  today = day + '/' + month + '/' + year;
-  //document.write(currentDate);
-  console.log(currentDate);
-
+  currentDate = day + '/' + month + '/' + year;
+*/
   var drawingTitle = currentDate;
   var drawing = {
     title: "Picture from " + drawingTitle,
     content: settings.shapes
   };
+
   $.ajax({
     type: "POST",
     contentType: "application/json; charset=utf-8",
@@ -337,6 +336,27 @@ $("#save-btn").click(function(){
     }
   });
 });
+
+$("#load-btn").click(function(){
+  var url = "http://localhost:3000/api/drawings/0"; //harkóðað, þarf að laga
+
+  $.ajax({
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    url: url,
+    //dataGet: JSON.parse(data),    (virkar ekki...!)
+    success: function (dataGet) {
+        console.log(dataGet);
+        //settings.shapes = dataGet.content;
+        //drawAll();
+    },
+    error: function (xhr, err) {
+        console.log(xhr);
+        console.log(err);
+    }
+  });
+});
+//var savedDrawing = $.parseJSON(drawing);
 
 $('#red-rdo').click(function() {
     settings.nextColor = "Red";
