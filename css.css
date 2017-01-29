@@ -13,7 +13,6 @@
   font-size: 20px;
   background: lightblue;
 }
-
 #dropDowns {
 
 }
@@ -32,5 +31,6 @@
 }
 
 #canvasDiv {
+  padding-left: 15%;
   background: lightyellow;
 }
