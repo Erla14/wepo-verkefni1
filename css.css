@@ -4,8 +4,7 @@
 
 #colors {
   background: pink;
-}
-#red-rdo {
+
 
 }
 
@@ -13,21 +12,31 @@
   font-size: 20px;
   background: lightblue;
 }
-#dropDowns {
 
-}
 #shapeDropDown {
-  width: 8%;
+  width: 12%;
   height: 25px;
-  padding-left: 15px;
+  display: block;
+  clear: both;
   background: red;
   float: left;
 }
 #widthDropDown {
-  margin-left: 10%;*/
-  /*width: 8%;*/
+
+  display: block;
+  float: left;
+  clear: both;
+  width: 12%;
   height: 25px;
   background: orange;
+}
+pickAcolor {
+  width: 12%;
+  height: 25px;
+  display: hidden;
+  display: block;
+  clear: both;
+  float: left;
 }
 
 #canvasDiv {

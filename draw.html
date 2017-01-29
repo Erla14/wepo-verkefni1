@@ -14,12 +14,40 @@
 			<button id="redo-btn">Redo</button>
 			<button id="save-btn">Save</button>
 		</div>
+		
+		<div id="canvasTitle">
+			<p>Drawing object:</p>
+		</div>
+		
+		<div id="shapeDropDown">
+			<select name="select" id="shapes" onchange="changeShape()">
+				<option value="Circle" />Circle</option>
+				<option value="Line" />Line</option>
+				<option value="Pen" selected="selected"/>Pen</option>
+				<option value="Rectangle" />Rectangle</option>
+				<option value="Text" />Text</option>
+			</select>
+		</div>
+		<div id="widthDropDown">
+			<select name="strokeWidth" id="str-width" onchange="changeWidth()">
+				<option value="10" />10</option>
+				<option value="9" />9</option>
+				<option value="8" />8</option>
+				<option value="7" />7</option>
+				<option value="6" />6</option>
+				<option value="5" />5</option>
+				<option value="4" />4</option>
+				<option value="3" selected="selected" />3</option>
+				<option value="2" />2</option>
+				<option value="1" />1</option>
+			</select>
+		</div>
 		<div id="colors">
 			<!-- Getur notað label til að fela radio button
 			og þá er hægt að velja lit með því að velja bara
 			myndina í staðinn -->
-			<label class="colorBlack">
-				<input type="radio" name="pickAcolor" id="black-rdo" hidden="button" />
+			<label class="colorBlack" >
+				<input type="radio" name="pickAcolor" id="black-rdo" hidden="hidden" />
 				<img src="colorBlack.jpg" alt="HTML5 Icon" style="width:5%;height:5%;">
 			</label>
 			<label class="colorRed">
@@ -34,34 +62,6 @@
 				<input type="radio" name="pickAcolor" id="green-rdo" hidden="button" />
 				<img src="colorGreen.png" alt="HTML5 Icon" style="width:5%;height:5%;">
 			</label>
-		</div>
-		<div id="canvasTitle">
-			<p>Drawing object:</p>
-		</div>
-		<div id="dropDowns">
-			<div id="shapeDropDown">
-				<select name="select" id="shapes" onchange="changeShape()">
-					<option value="Circle" />Circle</option>
-					<option value="Line" />Line</option>
-					<option value="Pen" selected="selected"/>Pen</option>
-					<option value="Rectangle" />Rectangle</option>
-					<option value="Text" />Text</option>
-				</select>
-			</div>
-			<div id="widthDropDown">
-				<select name="strokeWidth" id="str-width" onchange="changeWidth()">
-					<option value="10" />10</option>
-					<option value="9" />9</option>
-					<option value="8" />8</option>
-					<option value="7" />7</option>
-					<option value="6" />6</option>
-					<option value="5" />5</option>
-					<option value="4" />4</option>
-					<option value="3" selected="selected" />3</option>
-					<option value="2" />2</option>
-					<option value="1" />1</option>
-				</select>
-			</div>
 		</div>
 		<div id="canvasDiv" position="relative">
 			<canvas id = "myCanvas" width="900" height="400" style="border: 1px solid gray">
