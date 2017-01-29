@@ -1,31 +1,3 @@
-var drawing = {
-    title: "Nú er gaman",
-    content: "the contents of the shapes array"
-};
-
-var url = "http://localhost:3000/api/drawings";
-
-function senda(){
-
-$.ajax({
-    type: "POST",
-    contentType: "application/json; charset=utf-8",
-    url: url,
-    data: JSON.stringify(drawing),
-    success: function (data) {
-        // The drawing was successfully saved
-        //prompt("The drawing was successfully saved.");
-    },
-    error: function (xhr, err) {
-        // The drawing could NOT be saved
-        //prompt("The drawing could NOT be saved.");
-    }
-});
-
-}
-
-console.log(drawing);
-
 //Shape sér um að geyma öll sameiginleg gögn um teiknihlutina.
 class Shape {
     constructor(x, y, color, width) {
@@ -310,42 +282,82 @@ $('#clear-btn').click(function() {
     settings.shapes = [];
     settings.redo = [];
     drawAll();
-})
+});
 
 $('#undo-btn').click(function() {
     if (settings.shapes.length > 0) {
       settings.redo.push(settings.shapes.pop());
       drawAll();
     }
-})
+});
 
 $('#redo-btn').click(function() {
     if (settings.redo.length > 0) {
       settings.shapes.push(settings.redo.pop());
       drawAll();
     }
-})
+});
+
+$("#save-btn").click(function(){
+  var url = "http://localhost:3000/api/drawings";
+
+  var currentDate = new Date();
+  var day = currentDate.getDate();
+  var month = currentDate.getMonth() + 1;
+  var year = currentDate.getFullYear();
+
+  if(day < 10) {
+      day = '0' + day
+  }
+
+  if(month < 10) {
+      month = '0' + month
+  }
+
+  today = day + '/' + month + '/' + year;
+  //document.write(currentDate);
+  console.log(currentDate);
+
+  var drawingTitle = currentDate;
+  var drawing = {
+    title: "Picture from " + drawingTitle,
+    content: settings.shapes
+  };
+  $.ajax({
+    type: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: url,
+    data: JSON.stringify(drawing),
+    success: function (data) {
+        console.log(data);
+    },
+    error: function (xhr, err) {
+        console.log(xhr);
+        console.log(err);
+    }
+  });
+});
 
 $('#red-rdo').click(function() {
     settings.nextColor = "Red";
-})
+});
 
 $('#green-rdo').click(function() {
     settings.nextColor = "Green";
-})
+});
 
 $('#blue-rdo').click(function() {
     settings.nextColor = "Blue";
-})
+});
 
 $('#black-rdo').click(function() {
     settings.nextColor = "Black";
-})
+});
 
 function changeShape(){
     settings.nextObject = $('#shapes').val();
-}
+};
 
 function changeWidth(){
     settings.nextWidth = $('#str-width').val();
-}
+};
