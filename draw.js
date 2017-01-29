@@ -338,7 +338,7 @@ $("#save-btn").click(function(){
 });
 
 $("#load-btn").click(function(){
-  var url = "http://localhost:3000/api/drawings/1"; //harkóðað, þarf að laga
+  var url = "http://localhost:3000/api/drawings/0"; //harkóðað, þarf að laga
 
   $.ajax({
     type: "GET",
